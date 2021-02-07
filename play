@@ -1,13 +1,13 @@
 #!/bin/bash
 # https://github.com/BelkaDev/mustream 
-# Requires a running Spotify desktop client
+# Requires spotifyd
 
 check::network() { 
   [[ $? != 0 ]] && echo "Network error: couldn't reach server." && exit 1
 }
 
 check::running() {
-[[ -z $(pidof -s spotify) ]] && echo "Spotify is not running." && exit 1
+[[ -z $(pidof -s spotifyd) ]] && echo "Spotifyd is not running." && exit 1
 }
 
 _http_request() {
@@ -72,7 +72,7 @@ check::network
       echo "Nothing found." && exit 1
 
 ###### Sending D-Bus Event ######
-dbus-send  --print-reply --dest=org.mpris.MediaPlayer2.spotify /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.OpenUri string:spotify:$type:$key &>/dev/null
+dbus-send  --print-reply --dest=org.mpris.MediaPlayer2.spotifyd /org/mpris/MediaPlayer2 org.mpris.MediaPlayer2.Player.OpenUri string:spotify:$type:$key &>/dev/null
 
 ###### Output ######
 echo "Playing: $(_format_output "$(_fetch_metadata "description")" "$(_fetch_metadata "title")")"  
